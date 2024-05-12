@@ -35,10 +35,10 @@ def create_database():
             cursor.close()
 
             # Close the connection
-            connection.close()
+            #connection.close()
 
             # Connect to the newly created database
-            connection = psycopg2.connect(
+            connection_two = psycopg2.connect(
                 dbname="authDB",
                 user="user",
                 password="password",
@@ -48,20 +48,21 @@ def create_database():
             # connection.autocommit = True
 
             # Create the users table
-            cursor = connection.cursor()
+            cursor = connection_two.cursor()
             cursor.execute("""
-                CREATE TABLE users (
+                CREATE TABLE IF NOT EXISTS users (
                     email VARCHAR(1024) PRIMARY KEY,
                     password VARCHAR(1024),
                     hash VARCHAR(1024)
                 )
             """)
+            connection_two.commit()
             cursor.close()
 
             print("Database and users table created successfully")
 
             # Close the connection
-            connection.close()
+            connection_two.close()
 
         except OperationalError as e:
             print(f"The error '{e}' occurred. Retrying...")
