@@ -4,7 +4,7 @@ import psycopg2
 import time
 from psycopg2 import OperationalError
 
-url = "localhost"
+url = "db"
 port="5432"
 
 def create_database():
@@ -14,12 +14,13 @@ def create_database():
         try:
             # Connect to the default PostgreSQL database
             connection = psycopg2.connect(
-                database="authDB",
+                database="postgres",
                 user="user",
                 password="password",
                 host=url,
-                port=port,
+                port=port
             )
+            connected = True
             # connection.autocommit = True
             print("Connected to the default database")
             # Create a cursor object
@@ -41,7 +42,8 @@ def create_database():
                 dbname="authDB",
                 user="user",
                 password="password",
-                host=url
+                host=url,
+                port=port
             )
             # connection.autocommit = True
 
@@ -64,6 +66,7 @@ def create_database():
         except OperationalError as e:
             print(f"The error '{e}' occurred. Retrying...")
             retries += 1
+            connected = False
             time.sleep(5)
 
 if __name__ == "__main__":
