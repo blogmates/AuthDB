@@ -1,25 +1,17 @@
-# Use the official PostgreSQL image from the Docker Hub
-FROM postgres:latest
+# Use an official Python runtime as the base image
+FROM python:3.9-slim
 
-# Set environment variables (optional)
-ENV POSTGRES_DB=authDB
-ENV POSTGRES_USER=user
-ENV POSTGRES_PASSWORD=password
-ENV POSTGRES_HOST_AUTH_METHOD=trust
-# Copy initialization script into the container
+# Set the working directory in the container
+WORKDIR /scripts
 
-RUN apt-get update && \
-    apt-get install -y python3 python3-pip python3-psycopg2 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Copy the current directory contents into the container at /app
+COPY . /scripts
 
-WORKDIR scripts
+# Install any needed dependencies specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./scripts /scripts
+# Expose port 5000 to the outside world
+EXPOSE 5000
 
-EXPOSE 5432
-
-# Update shebang line in init.py
-RUN sed -i 's/\/usr\/bin\/env python3/\/usr\/bin\/python3/' /scripts/init.py
-
-CMD ["python3", "init.py"]
+# Run init.py when the container launches
+CMD ["python3", "scripts/init.py"]
